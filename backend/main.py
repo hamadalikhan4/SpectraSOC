@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-
 load_dotenv()
 
 from fastapi import FastAPI
@@ -9,7 +8,7 @@ from app.core.config import settings
 from app.core.exceptions import (
     app_exception_handler,
     global_exception_handler,
-    AppException,
+    AppException
 )
 
 from app.middleware.request_logger import RequestLoggerMiddleware
@@ -29,40 +28,32 @@ from app.api.v1.incidents import router as incidents_router
 from app.api.v1.reports import router as reports_router
 from app.api.v1.siem import router as siem_router
 from app.api.v1.correlation import router as correlation_router
-
 from app.routers import threat_ioc
 from app.routers import incident_management
 from app.routers import soar
-
-
 # ----------------------------
 # APP INIT
 # ----------------------------
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    version=settings.VERSION,
+    version=settings.VERSION
 )
 
 
 # ----------------------------
-# CORS
+# MIDDLEWARE
 # ----------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "https://hamadalikhan4.github.io",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
-# ----------------------------
-# CUSTOM MIDDLEWARE
-# ----------------------------
 app.add_middleware(RequestLoggerMiddleware)
 app.add_middleware(ValidationMiddleware)
 
@@ -79,25 +70,20 @@ app.add_exception_handler(Exception, global_exception_handler)
 # ----------------------------
 app.include_router(threat_router, prefix="/api/v1")
 app.include_router(alert_router)
-
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(user_router, prefix="/api/v1")
 app.include_router(dashboard_router, prefix="/api/v1")
 app.include_router(audit_router, prefix="/api/v1")
 app.include_router(detection_router, prefix="/api/v1")
 app.include_router(logs_router, prefix="/api/v1")
-
 app.include_router(ai_router)
 app.include_router(incidents_router)
 app.include_router(reports_router)
-
 app.include_router(siem_router, prefix="/api/v1")
 app.include_router(correlation_router, prefix="/api/v1")
-
 app.include_router(threat_ioc.router)
 app.include_router(incident_management.router)
 app.include_router(soar.router)
-
 
 # ----------------------------
 # HEALTH CHECK
@@ -107,5 +93,5 @@ def home():
     return {
         "success": True,
         "message": "SpectraSOC Backend Running",
-        "version": settings.VERSION,
+        "version": settings.VERSION
     }
