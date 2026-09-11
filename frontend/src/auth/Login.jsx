@@ -2,43 +2,73 @@ import { useState } from "react";
 import API from "../api/api";
 
 export default function Login({ onLogin }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@spectrasoc.com");
+  const [password, setPassword] = useState("Admin@12345");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const login = async () => {
+    if (!email || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+
     try {
+      setLoading(true);
+      setError("");
+
+      const formData = new URLSearchParams();
+
+      formData.append("username", email);
+      formData.append("password", password);
+      formData.append("grant_type", "password");
+
       const res = await API.post(
-        "/api/v1/auth/login-json",
+        "/api/v1/auth/login",
+        formData,
         {
-          email,
-          password,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
       );
 
-      // Save JWT Access Token
       localStorage.setItem(
         "token",
         res.data.access_token
       );
 
-      // Save Refresh Token
-      localStorage.setItem(
-        "refresh",
-        res.data.refresh_token
-      );
+      if (res.data.refresh_token) {
+        localStorage.setItem(
+          "refresh",
+          res.data.refresh_token
+        );
+      }
 
-      // Save user email (optional)
       localStorage.setItem(
         "email",
         email
       );
 
-      onLogin();
+      await onLogin();
 
     } catch (err) {
-      console.error(err);
+      console.error("Login error:", err);
 
-      alert("Invalid Email or Password");
+      const message =
+        err?.response?.data?.detail ||
+        err?.response?.data?.message ||
+        "Invalid Email or Password";
+
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      login();
     }
   };
 
@@ -51,11 +81,29 @@ export default function Login({ onLogin }) {
 
         <p>SOC Authentication</p>
 
+        {error && (
+          <div
+            style={{
+              marginBottom: "16px",
+              padding: "10px 12px",
+              border: "1px solid rgba(239, 68, 68, 0.35)",
+              borderRadius: "8px",
+              background: "rgba(239, 68, 68, 0.08)",
+              color: "#f87171",
+              fontSize: "14px",
+            }}
+          >
+            {error}
+          </div>
+        )}
+
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={handleKeyDown}
+          autoComplete="email"
         />
 
         <input
@@ -63,13 +111,16 @@ export default function Login({ onLogin }) {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
+          autoComplete="current-password"
         />
 
         <button
           className="btn"
           onClick={login}
+          disabled={loading}
         >
-          LOGIN
+          {loading ? "AUTHENTICATING..." : "LOGIN"}
         </button>
 
       </div>
