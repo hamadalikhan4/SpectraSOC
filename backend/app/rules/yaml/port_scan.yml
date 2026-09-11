@@ -1,0 +1,15 @@
+name: Port Scan
+attack_type: Port Scan
+severity: Medium
+risk_score: 70
+
+patterns:
+  - port scan
+  - nmap
+  - masscan
+  - multiple connection attempts
+
+recommendations:
+  - Enable firewall rules
+  - Block suspicious IP ranges
+  - Rate limit connections

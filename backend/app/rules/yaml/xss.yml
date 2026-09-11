@@ -1,0 +1,15 @@
+name: XSS Attack
+attack_type: Cross Site Scripting (XSS)
+severity: High
+risk_score: 80
+
+patterns:
+  - <script>
+  - javascript:
+  - onerror=
+  - onload=
+
+recommendations:
+  - Escape HTML output
+  - Enable CSP headers
+  - Sanitize inputs

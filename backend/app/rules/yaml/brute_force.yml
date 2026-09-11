@@ -1,0 +1,16 @@
+name: SSH Brute Force
+attack_type: SSH Brute Force
+severity: Critical
+risk_score: 90
+
+patterns:
+  - failed login
+  - invalid password
+  - authentication failure
+  - ssh login failed
+
+recommendations:
+  - Block source IP
+  - Enable MFA
+  - Rate limit SSH
+  - Monitor authentication logs

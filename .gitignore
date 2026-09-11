@@ -1,0 +1,44 @@
+# Python virtual environments
+.venv/
+venv/
+backend/venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Secrets
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
+# React / Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.cache/
+coverage/
+htmlcov/

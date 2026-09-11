@@ -1,0 +1,16 @@
+name: SQL Injection
+attack_type: SQL Injection
+severity: High
+risk_score: 85
+
+patterns:
+  - select * from
+  - "' or '1'='1"
+  - union select
+  - drop table
+  - -- 
+
+recommendations:
+  - Use parameterized queries
+  - Enable WAF
+  - Validate inputs
